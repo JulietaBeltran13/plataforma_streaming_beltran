@@ -130,3 +130,36 @@ id_contenido — ID contenido (FK) — INT — referencia a contenido(id_conteni
 puntaje — Puntaje — INT — CHECK (puntaje BETWEEN 1 AND 5) (restricción).
 comentario — Comentario — TEXT
 fecha_rating — Fecha rating — DATE.
+
+---
+## Listado de Vistas
+## vw_contenido_con_categoria
+Objetivo: consultar el catálogo con su categoría en una sola vista.
+Tablas: contenido (c) ⟶ categorias (cat).
+Columnas clave: id_contenido, titulo, tipo_contenido, año, clasificacion_edad, id_categoria, nombre_categoria.
+Uso típico: filtrar por género, armar carruseles y páginas de detalle.
+
+## vw_historial_detallado
+Objetivo: ver el histórico de reproducciones con contexto de perfil, usuario y contenido para analítica.
+Tablas: historial_visualizacion (hv) ⟶ perfiles (p) ⟶ usuarios (u) ⟶ contenido (c).
+Columnas clave: fecha_visualizacion, progreso_minutos, perfil, usuario, título y tipo de contenido.
+Uso: análisis de consumo por usuario/perfil, funnels de visualización, horas vistas.
+
+## vw_ratings_promedio
+Objetivo: exponer el promedio y la cantidad de ratings por contenido.
+Tablas: contenido (c) ⟶ ratings (r).
+Columnas: id_contenido, titulo, promedio_puntaje, cantidad_ratings.
+Uso: rankings, “mejor valorados”, QA de reseñas.
+
+## vw_suscripciones_detalle
+Objetivo: monitorear el estado comercial: qué plan tiene cada usuario y su vigencia.
+Tablas: suscripciones (s) ⟶ usuarios (u) ⟶ planes (p).
+Columnas: plan, precio, resolución, dispositivos, fechas y estado.
+Uso: segmentación por plan, churn (canceladas), upgrades/downgrades.
+
+## vw_series_episodios_resumen
+Objetivo: resumen de series con temporadas, episodios y total de minutos.
+Tablas: contenido (c, solo tipo = 'serie') ⟶ temporadas (t) ⟶ episodios (e).
+Columnas: total_temporadas, total_episodios, total_minutos.
+Uso: cobertura de catálogo, duración total disponible, QA de integridad (temporadas/episodios).
+
