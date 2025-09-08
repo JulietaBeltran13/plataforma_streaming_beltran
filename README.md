@@ -163,3 +163,51 @@ Tablas: contenido (c, solo tipo = 'serie') ⟶ temporadas (t) ⟶ episodios (e).
 Columnas: total_temporadas, total_episodios, total_minutos.
 Uso: cobertura de catálogo, duración total disponible, QA de integridad (temporadas/episodios).
 
+--- 
+## Listado de Funciones 
+## fn_promedio_rating_contenido(p_id_contenido INT) → DECIMAL(4,2)
+Objetivo: obtener el promedio de puntaje de un contenido.
+Lee: ratings.
+Uso: SELECT fn_promedio_rating_contenido(3).
+
+## fn_total_minutos_vistos_perfil(p_id_perfil INT) → INT
+Objetivo: minutos totales vistos por un perfil.
+Lee: historial_visualizacion.
+Uso: dashboards de engagement por perfil.
+
+## fn_perfiles_por_usuario(p_id_usuario INT) → INT
+Objetivo: cantidad de perfiles creados por un usuario (p.ej., validar límites del plan).
+Lee: perfiles.
+
+--- 
+## Listado de Stored Procedures
+## sp_crear_usuario_y_perfil(...)
+Objetivo: alta atómica de usuario + perfil inicial (evita pasos manuales).
+Impacta: usuarios, perfiles.
+Beneficio: coherencia y rapidez en onboarding.
+OUT: devuelve id_usuario e id_perfil creados.
+
+## sp_registrar_visualizacion(p_id_perfil, p_id_contenido, p_progreso_minutos)
+Objetivo: registrar un evento de visualización con timestamp.
+Impacta: historial_visualizacion.
+Validación: progreso ≥ 0.
+
+## sp_calificar_contenido(p_id_perfil, p_id_contenido, p_puntaje, p_comentario, OUT p_id_rating_out)
+Objetivo: upsert de rating (si existe para el par perfil/contenido, lo actualiza; si no, lo inserta).
+Impacta: ratings.
+Validación: puntaje 1..5.
+
+## sp_cambiar_plan_usuario(p_id_usuario, p_id_plan, p_fecha_inicio, p_fecha_fin)
+Objetivo: cancelar suscripción activa solapada y crear una nueva “activa”.
+Impacta: suscripciones.
+Beneficio: asegura un único plan activo y conserva histórico.
+
+---
+## Listado de Triggers
+## trg_before_insert_temporadas_check_serie (BEFORE INSERT ON temporadas)
+Objetivo: solo permitir temporadas para contenidos tipo serie y validar número/cantidad.
+Tablas: temporadas, valida contra contenido.
+
+## trg_before_insert_episodios_validaciones (BEFORE INSERT ON episodios)
+Objetivo: validar numero_episodio > 0 y duracion > 0.
+Tablas: episodios.
